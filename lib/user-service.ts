@@ -11,6 +11,8 @@ import {
   limit,
   getDocs,
   increment,
+  onSnapshot,
+  Unsubscribe,
 } from "firebase/firestore"
 import { db } from "./firebase"
 
@@ -47,6 +49,8 @@ export interface AnalysisResult {
     up: number
     down: number
   }
+  userDisplayName?: string
+  userPhotoURL?: string | null
 }
 
 export interface UserVote {
@@ -68,6 +72,20 @@ export const getUserData = async (uid: string): Promise<UserData | null> => {
     console.error("Error getting user data:", error)
     throw error
   }
+}
+
+// Real-time user data listener
+export const subscribeToUserData = (uid: string, callback: (data: UserData | null) => void): Unsubscribe => {
+  return onSnapshot(doc(db, "users", uid), (doc) => {
+    if (doc.exists()) {
+      callback(doc.data() as UserData)
+    } else {
+      callback(null)
+    }
+  }, (error) => {
+    console.error("Error listening to user data:", error)
+    callback(null)
+  })
 }
 
 export const updateUserData = async (uid: string, data: Partial<UserData>) => {
@@ -128,9 +146,83 @@ export const getUserAnalyses = async (userId: string, limitCount: number = 10) =
       id: doc.id,
       ...doc.data()
     })) as AnalysisResult[]
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error getting user analyses:", error)
+    
+    // If it's an index error, try without ordering
+    if (error.code === 'failed-precondition' || error.message.includes('index')) {
+      console.log("Index not ready, fetching without ordering...")
+      const q = query(
+        collection(db, "analyses"),
+        where("userId", "==", userId),
+        limit(limitCount)
+      )
+      
+      const querySnapshot = await getDocs(q)
+      const results = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as AnalysisResult[]
+      
+      // Sort manually on client side
+      return results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    }
+    
     throw error
+  }
+}
+
+// Real-time user analyses listener
+export const subscribeToUserAnalyses = (userId: string, limitCount: number = 10, callback: (analyses: AnalysisResult[]) => void): Unsubscribe => {
+  try {
+    const q = query(
+      collection(db, "analyses"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc"),
+      limit(limitCount)
+    )
+    
+    return onSnapshot(q, (querySnapshot) => {
+      const analyses = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as AnalysisResult[]
+      callback(analyses)
+    }, (error: any) => {
+      console.error("Error listening to user analyses:", error)
+      
+      // Fallback for index errors
+      if (error.code === 'failed-precondition' || error.message.includes('index')) {
+        console.log("Index not ready, using fallback query...")
+        const fallbackQ = query(
+          collection(db, "analyses"),
+          where("userId", "==", userId),
+          limit(limitCount)
+        )
+        
+        onSnapshot(fallbackQ, (querySnapshot) => {
+          const analyses = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as AnalysisResult[]
+          
+          // Sort manually on client side
+          const sortedAnalyses = analyses.sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          callback(sortedAnalyses)
+        }, (fallbackError) => {
+          console.error("Fallback query also failed:", fallbackError)
+          callback([])
+        })
+      } else {
+        callback([])
+      }
+    })
+  } catch (error) {
+    console.error("Error setting up user analyses listener:", error)
+    callback([])
+    return () => {}
   }
 }
 
@@ -143,13 +235,129 @@ export const getRecentAnalyses = async (limitCount: number = 20) => {
     )
     
     const querySnapshot = await getDocs(q)
-    return querySnapshot.docs.map(doc => ({
+    const analyses = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()
     })) as AnalysisResult[]
-  } catch (error) {
+
+    // Fetch user data for each analysis
+    const analysesWithUsers = await Promise.all(
+      analyses.map(async (analysis) => {
+        try {
+          const userData = await getUserData(analysis.userId)
+          return {
+            ...analysis,
+            userDisplayName: userData?.displayName || "Anonymous User",
+            userPhotoURL: userData?.photoURL || null,
+          }
+        } catch (error) {
+          console.error("Error fetching user data for analysis:", error)
+          return {
+            ...analysis,
+            userDisplayName: "Anonymous User",
+            userPhotoURL: null,
+          }
+        }
+      })
+    )
+
+    return analysesWithUsers
+  } catch (error: any) {
     console.error("Error getting recent analyses:", error)
+    
+    // If it's an index error, try without ordering
+    if (error.code === 'failed-precondition' || error.message.includes('index')) {
+      console.log("Index not ready, fetching without ordering...")
+      const q = query(
+        collection(db, "analyses"),
+        limit(limitCount)
+      )
+      
+      const querySnapshot = await getDocs(q)
+      const results = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as AnalysisResult[]
+      
+      // Sort manually on client side and fetch user data
+      const sortedResults = results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      
+      const analysesWithUsers = await Promise.all(
+        sortedResults.map(async (analysis) => {
+          try {
+            const userData = await getUserData(analysis.userId)
+            return {
+              ...analysis,
+              userDisplayName: userData?.displayName || "Anonymous User",
+              userPhotoURL: userData?.photoURL || null,
+            }
+          } catch (error) {
+            console.error("Error fetching user data for analysis:", error)
+            return {
+              ...analysis,
+              userDisplayName: "Anonymous User",
+              userPhotoURL: null,
+            }
+          }
+        })
+      )
+
+      return analysesWithUsers
+    }
+    
     throw error
+  }
+}
+
+// Real-time recent analyses listener
+export const subscribeToRecentAnalyses = (limitCount: number = 20, callback: (analyses: AnalysisResult[]) => void): Unsubscribe => {
+  try {
+    const q = query(
+      collection(db, "analyses"),
+      orderBy("createdAt", "desc"),
+      limit(limitCount)
+    )
+    
+    return onSnapshot(q, (querySnapshot) => {
+      const analyses = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as AnalysisResult[]
+      callback(analyses)
+    }, (error: any) => {
+      console.error("Error listening to recent analyses:", error)
+      
+      // Fallback for index errors
+      if (error.code === 'failed-precondition' || error.message.includes('index')) {
+        console.log("Index not ready, using fallback query...")
+        const fallbackQ = query(
+          collection(db, "analyses"),
+          limit(limitCount)
+        )
+        
+        onSnapshot(fallbackQ, (querySnapshot) => {
+          const analyses = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as AnalysisResult[]
+          
+          // Sort manually on client side
+          const sortedAnalyses = analyses.sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          callback(sortedAnalyses)
+        }, (fallbackError) => {
+          console.error("Fallback query also failed:", fallbackError)
+          callback([])
+        })
+      } else {
+        callback([])
+      }
+    })
+  } catch (error) {
+    console.error("Error setting up recent analyses listener:", error)
+    callback([])
+    return () => {}
   }
 }
 
@@ -198,8 +406,23 @@ export const getUserVote = async (userId: string, analysisId: string) => {
       return voteDoc.data() as UserVote
     }
     return null
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error getting user vote:", error)
+    
+    // If it's an index error, try a different approach
+    if (error.code === 'failed-precondition' || error.message.includes('index')) {
+      console.log("Index not ready, trying alternative query...")
+      // Try to get all votes for the user and filter client-side
+      const q = query(
+        collection(db, "votes"),
+        where("userId", "==", userId)
+      )
+      
+      const querySnapshot = await getDocs(q)
+      const userVote = querySnapshot.docs.find(doc => doc.data().analysisId === analysisId)
+      return userVote ? userVote.data() as UserVote : null
+    }
+    
     throw error
   }
 } 

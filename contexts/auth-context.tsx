@@ -8,6 +8,8 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
@@ -17,6 +19,7 @@ interface AuthContextType {
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
   signUp: (email: string, password: string, name: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   logout: () => Promise<void>
   updateUserProfile: (data: { displayName?: string; photoURL?: string }) => Promise<void>
 }
@@ -71,6 +74,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const signInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider()
+      const result = await signInWithPopup(auth, provider)
+      const user = result.user
+
+      // Check if user document exists, if not create one
+      const userDoc = await getDoc(doc(db, "users", user.uid))
+      
+      if (!userDoc.exists()) {
+        // Create user document for new Google users
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || user.email?.split('@')[0] || 'User',
+          photoURL: user.photoURL,
+          createdAt: new Date().toISOString(),
+          karma: 0,
+          totalAnalyses: 0,
+          accuracyRate: 0,
+          communityVotes: 0,
+          badges: ["Early Adopter"],
+        })
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+
   const logout = async () => {
     try {
       await signOut(auth)
@@ -95,6 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signIn,
     signUp,
+    signInWithGoogle,
     logout,
     updateUserProfile,
   }

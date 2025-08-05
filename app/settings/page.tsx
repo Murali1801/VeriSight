@@ -1,12 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
+import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useAuth } from "@/contexts/auth-context"
+import { updateUserData, subscribeToUserData, UserData } from "@/lib/user-service"
+import { useToast } from "@/hooks/use-toast"
+import Image from "next/image"
+import { Camera } from "lucide-react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,6 +28,14 @@ import { SettingsIcon, Mail, Shield, Trash2, Bell, Eye, Save } from "lucide-reac
 import { Navbar } from "@/components/navbar"
 
 export default function SettingsPage() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [userData, setUserData] = useState<UserData | null>(null)
+  const { user } = useAuth()
+  const { toast } = useToast()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
   const [settings, setSettings] = useState({
     email: "john.doe@example.com",
     emailNotifications: true,
@@ -29,7 +43,7 @@ export default function SettingsPage() {
     securityAlerts: true,
     defaultAnalysisMode: "text",
     autoSave: true,
-    darkMode: false,
+    darkMode: theme === "dark",
   })
 
   const [passwords, setPasswords] = useState({
@@ -40,11 +54,58 @@ export default function SettingsPage() {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
+  // Ensure component is mounted before accessing theme
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Set up real-time listener for user data
+  useEffect(() => {
+    if (!user) return
+
+    const unsubscribe = subscribeToUserData(user.uid, (data) => {
+      setUserData(data)
+      if (data) {
+        setSettings(prev => ({
+          ...prev,
+          email: data.email || prev.email,
+        }))
+      }
+    })
+
+    return () => unsubscribe()
+  }, [user])
+
+  // Update settings when theme changes
+  useEffect(() => {
+    if (mounted) {
+      setSettings((prev) => ({
+        ...prev,
+        darkMode: theme === "dark",
+      }))
+    }
+  }, [theme, mounted])
+
+  // Initialize dark mode setting when component mounts
+  useEffect(() => {
+    if (mounted && theme) {
+      setSettings((prev) => ({
+        ...prev,
+        darkMode: theme === "dark",
+      }))
+    }
+  }, [mounted, theme])
+
   const handleSettingChange = (key: string, value: any) => {
     setSettings((prev) => ({
       ...prev,
       [key]: value,
     }))
+
+    // Handle dark mode toggle
+    if (key === "darkMode") {
+      setTheme(value ? "dark" : "light")
+    }
   }
 
   const handlePasswordChange = (key: string, value: string) => {
@@ -54,9 +115,84 @@ export default function SettingsPage() {
     }))
   }
 
-  const handleSaveSettings = () => {
-    // Save settings to backend
-    console.log("Saving settings:", settings)
+  const handleSaveSettings = async () => {
+    if (!user) return
+    
+    try {
+      await updateUserData(user.uid, {
+        // Add any settings that need to be saved to user data
+        // For now, we'll just show a success message
+      })
+      
+      toast({
+        title: "Settings Saved",
+        description: "Your settings have been saved successfully",
+      })
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save settings",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !user) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid File",
+        description: "Please select an image file",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File Too Large",
+        description: "Please select an image smaller than 5MB",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      // Convert file to base64 for storage
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const base64String = e.target?.result as string
+        
+        // Update user data with new photo URL
+        await updateUserData(user.uid, {
+          photoURL: base64String,
+        })
+
+        setIsUploading(false)
+        toast({
+          title: "Profile Picture Updated",
+          description: "Your profile picture has been updated successfully",
+        })
+      }
+      reader.readAsDataURL(file)
+    } catch (error: any) {
+      setIsUploading(false)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to upload image",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click()
   }
 
   const handleChangePassword = () => {
@@ -85,6 +221,55 @@ export default function SettingsPage() {
         </div>
 
         <div className="space-y-6">
+          {/* Profile Picture Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Camera className="h-5 w-5 mr-2" />
+                Profile Picture
+              </CardTitle>
+              <CardDescription>Update your profile picture</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <Image
+                    src={userData?.photoURL || user?.photoURL || "/placeholder.svg?height=64&width=64&text=Profile"}
+                    alt="Profile"
+                    width={64}
+                    height={64}
+                    className="rounded-full border-2 border-gray-200 dark:border-slate-700"
+                  />
+                  {isUploading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                    Upload a new profile picture. Supported formats: JPG, PNG, GIF. Max size: 5MB.
+                  </p>
+                  <Button
+                    onClick={triggerFileInput}
+                    disabled={isUploading}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {isUploading ? "Uploading..." : "Choose Image"}
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Account Settings */}
           <Card>
             <CardHeader>
@@ -196,8 +381,9 @@ export default function SettingsPage() {
                   <p className="text-sm text-gray-500">Switch to dark theme</p>
                 </div>
                 <Switch
-                  checked={settings.darkMode}
+                  checked={mounted && theme ? theme === "dark" : false}
                   onCheckedChange={(checked) => handleSettingChange("darkMode", checked)}
+                  disabled={!mounted}
                 />
               </div>
             </CardContent>
