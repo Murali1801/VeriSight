@@ -9,9 +9,9 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "TruthGuard AI - Fake News Detection",
-  description: "AI-powered fake news and deepfake detection system",
-    generator: 'v0.dev'
+  title: "VeriSight - AI Detection System",
+  description: "Advanced AI-powered detection system for verification and analysis",
+  generator: 'v0.dev'
 }
 
 export default function RootLayout({
