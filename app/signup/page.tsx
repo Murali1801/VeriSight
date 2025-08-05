@@ -58,7 +58,7 @@ export default function SignUpPage() {
 
   return (
     <AuthRedirect>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-black dark:to-black flex items-center justify-center p-4">
         <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -68,7 +68,7 @@ export default function SignUpPage() {
           </Link>
         </div>
 
-        <Card className="shadow-lg dark:bg-slate-900 dark:border-slate-800">
+        <Card className="shadow-lg dark:bg-black dark:border-slate-800">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl dark:text-white">Create Account</CardTitle>
             <CardDescription className="dark:text-gray-300">
@@ -89,7 +89,7 @@ export default function SignUpPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                  className="dark:bg-black dark:border-slate-700 dark:text-white"
                 />
               </div>
 
@@ -105,7 +105,7 @@ export default function SignUpPage() {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                  className="dark:bg-black dark:border-slate-700 dark:text-white"
                 />
               </div>
 
@@ -122,7 +122,7 @@ export default function SignUpPage() {
                     value={formData.password}
                     onChange={handleInputChange}
                     required
-                    className="dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                    className="dark:bg-black dark:border-slate-700 dark:text-white"
                   />
                   <Button
                     type="button"
@@ -159,7 +159,7 @@ export default function SignUpPage() {
 
               <Button
                 variant="outline"
-                className="w-full mt-4 bg-transparent dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-700"
+                className="w-full mt-4 bg-transparent dark:bg-black dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800"
                 onClick={async () => {
                   setIsGoogleLoading(true)
                   try {

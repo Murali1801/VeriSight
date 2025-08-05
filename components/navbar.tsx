@@ -86,7 +86,7 @@ export function Navbar() {
   }
 
   return (
-    <nav className="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-gray-200/20 dark:border-slate-800/50 sticky top-0 z-50">
+    <nav className="bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200/20 dark:border-slate-800/30 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -124,7 +124,7 @@ export function Navbar() {
               <span className="text-sm font-semibold dark:text-white">
                 {userData?.karma || 0}
               </span>
-              <Badge variant="secondary" className="bg-blue-100 dark:bg-slate-800 text-blue-800 dark:text-blue-300">
+              <Badge variant="secondary" className="bg-blue-100 dark:bg-black text-blue-800 dark:text-blue-300">
                 {userData?.badges?.[0] || "Truth Seeker"}
               </Badge>
             </div>
@@ -182,7 +182,7 @@ export function Navbar() {
 
         {/* Mobile Menu Popup */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 right-2 w-32 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md shadow-lg z-40" ref={menuRef}>
+          <div className="md:hidden absolute top-16 right-2 w-32 bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-md shadow-lg z-40" ref={menuRef}>
             <div className="p-1 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon
@@ -216,7 +216,7 @@ export function Navbar() {
                   <Award className="h-3 w-3 text-yellow-500" />
                   <span className="font-semibold">{userData?.karma || 0} Karma</span>
                 </div>
-                <Badge variant="secondary" className="mt-1 text-xs bg-blue-100 dark:bg-slate-800 text-blue-800 dark:text-blue-300">
+                <Badge variant="secondary" className="mt-1 text-xs bg-blue-100 dark:bg-black text-blue-800 dark:text-blue-300">
                   {userData?.badges?.[0] || "Truth Seeker"}
                 </Badge>
               </div>

@@ -280,7 +280,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -350,7 +350,7 @@ export default function ProfilePage() {
                         type="email"
                         value={profileData.email}
                         disabled={true}
-                        className="text-sm sm:text-base bg-gray-100 dark:bg-slate-800 cursor-not-allowed"
+                        className="text-sm sm:text-base bg-gray-100 dark:bg-black cursor-not-allowed"
                       />
                       <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         Email address cannot be changed
@@ -375,7 +375,7 @@ export default function ProfilePage() {
             </Card>
 
             {/* Stats Card */}
-            <Card className="mt-4 sm:mt-6">
+            <Card className="mt-4 sm:mt-6 dark:bg-black dark:border-slate-800">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg dark:text-white">Your Statistics</CardTitle>
               </CardHeader>
@@ -423,7 +423,7 @@ export default function ProfilePage() {
               <TabsContent value="badges">
                 <div className="space-y-6">
                   {/* Badges Overview */}
-                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <Card className="dark:bg-black dark:border-slate-800">
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <div>
@@ -453,7 +453,7 @@ export default function ProfilePage() {
                     {badges.map((badge, index) => (
                       <Card 
                         key={index} 
-                        className={`dark:bg-slate-900 dark:border-slate-800 transition-all duration-200 hover:shadow-lg ${
+                        className={`dark:bg-black dark:border-slate-800 transition-all duration-200 hover:shadow-lg ${
                           badge.earned 
                             ? 'ring-2 ring-yellow-400/20 dark:ring-yellow-400/30' 
                             : 'opacity-75'
@@ -465,7 +465,7 @@ export default function ProfilePage() {
                             <div className={`flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-3xl sm:text-4xl ${
                               badge.earned 
                                 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg' 
-                                : 'bg-gray-200 dark:bg-slate-700'
+                                : 'bg-gray-200 dark:bg-black'
                             }`}>
                               {badge.icon}
                             </div>
@@ -484,7 +484,7 @@ export default function ProfilePage() {
                                   className={`text-xs sm:text-sm font-medium px-2 py-1 ${
                                     badge.earned 
                                       ? badge.color 
-                                      : 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-gray-400'
+                                      : 'bg-gray-100 text-gray-500 dark:bg-black dark:text-gray-400'
                                   }`}
                                 >
                                   {badge.earned ? 'Earned' : 'In Progress'}
@@ -503,7 +503,7 @@ export default function ProfilePage() {
                                     {Math.round(badge.progress)}%
                                   </span>
                                 </div>
-                                <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-3">
+                                <div className="w-full bg-gray-200 dark:bg-black rounded-full h-3">
                                   <div 
                                     className={`h-3 rounded-full transition-all duration-300 ${
                                       badge.earned 
@@ -526,7 +526,7 @@ export default function ProfilePage() {
                   </div>
 
                   {/* Achievement Stats */}
-                  <Card className="dark:bg-slate-900 dark:border-slate-800">
+                  <Card className="dark:bg-black dark:border-slate-800">
                     <CardHeader>
                       <CardTitle className="dark:text-white text-lg sm:text-xl lg:text-2xl">Achievement Statistics</CardTitle>
                     </CardHeader>
@@ -563,7 +563,7 @@ export default function ProfilePage() {
               </TabsContent>
 
               <TabsContent value="activity">
-                <Card className="dark:bg-slate-900 dark:border-slate-800">
+                <Card className="dark:bg-black dark:border-slate-800">
                   <CardHeader>
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div>

@@ -42,9 +42,9 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-black dark:via-black dark:to-black">
       {/* Navigation */}
-      <nav className="border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50 border-gray-200/20 dark:border-slate-800/50">
+      <nav className="border-b bg-white/80 dark:bg-black/80 backdrop-blur-sm sticky top-0 z-50 border-gray-200/20 dark:border-slate-800/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
@@ -87,7 +87,7 @@ export default function LandingPage() {
 
           {/* Mobile Menu Popup */}
           {isMenuOpen && (
-            <div className="sm:hidden absolute top-16 right-2 w-28 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-md shadow-lg z-40" ref={menuRef}>
+            <div className="sm:hidden absolute top-16 right-2 w-28 bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-md shadow-lg z-40" ref={menuRef}>
               <div className="p-1 space-y-1">
                 <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
                   <Button 
@@ -143,7 +143,7 @@ export default function LandingPage() {
 
           {/* Feature Showcase */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-6xl mx-auto px-4">
-            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/20 dark:border-slate-700/50">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/20 dark:border-slate-700/30">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
                 <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
@@ -153,7 +153,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/20 dark:border-slate-700/50">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/20 dark:border-slate-700/30">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
                 <ImageIcon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
@@ -163,7 +163,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/20 dark:border-slate-700/50 sm:col-span-2 lg:col-span-1">
+            <div className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-xl p-4 sm:p-6 shadow-lg border border-white/20 dark:border-slate-700/30 sm:col-span-2 lg:col-span-1">
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-3 sm:mb-4">
                 <Video className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
@@ -177,7 +177,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-12 sm:py-20 bg-white dark:bg-slate-900">
+      <section className="py-12 sm:py-20 bg-white dark:bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">How It Works</h2>
@@ -187,7 +187,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-4 sm:pt-6">
                 <Upload className="h-8 w-8 sm:h-12 sm:w-12 text-blue-600 dark:text-blue-400 mx-auto mb-3 sm:mb-4" />
                 <h3 className="text-base sm:text-xl font-semibold mb-2 dark:text-white">Upload Any Content</h3>
@@ -197,7 +197,7 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-4 sm:pt-6">
                 <Brain className="h-8 w-8 sm:h-12 sm:w-12 text-purple-600 dark:text-purple-400 mx-auto mb-3 sm:mb-4" />
                 <h3 className="text-base sm:text-xl font-semibold mb-2 dark:text-white">AI-Powered Detection</h3>
@@ -207,7 +207,7 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-4 sm:pt-6">
                 <CheckCircle className="h-8 w-8 sm:h-12 sm:w-12 text-green-600 dark:text-green-400 mx-auto mb-3 sm:mb-4" />
                 <h3 className="text-base sm:text-xl font-semibold mb-2 dark:text-white">Evidence-Based Verdict</h3>
@@ -217,7 +217,7 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="text-center p-4 sm:p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-4 sm:pt-6">
                 <Users className="h-8 w-8 sm:h-12 sm:w-12 text-orange-600 dark:text-orange-400 mx-auto mb-3 sm:mb-4" />
                 <h3 className="text-base sm:text-xl font-semibold mb-2 dark:text-white">Community Trust Layer</h3>
@@ -261,7 +261,7 @@ export default function LandingPage() {
       </section>
 
       {/* Technology Section */}
-      <section className="py-12 sm:py-20 bg-white dark:bg-slate-900">
+      <section className="py-12 sm:py-20 bg-white dark:bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
@@ -273,7 +273,7 @@ export default function LandingPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
                   <Brain className="h-6 w-6 text-white" />
@@ -285,7 +285,7 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-500 rounded-lg flex items-center justify-center mb-4">
                   <Shield className="h-6 w-6 text-white" />
@@ -297,7 +297,7 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            <Card className="p-6 hover:shadow-lg transition-shadow dark:bg-slate-800 dark:border-slate-700">
+            <Card className="p-6 hover:shadow-lg transition-shadow dark:bg-black dark:border-slate-700">
               <CardContent className="pt-6">
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
                   <Users className="h-6 w-6 text-white" />
@@ -313,7 +313,7 @@ export default function LandingPage() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-12 sm:py-20 bg-gray-50 dark:bg-slate-950">
+      <section className="py-12 sm:py-20 bg-gray-50 dark:bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
@@ -326,7 +326,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-blue-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-100 dark:bg-black rounded-full flex items-center justify-center mx-auto mb-4">
                 <FileText className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="text-lg font-semibold mb-2 dark:text-white">Journalists</h3>
@@ -336,7 +336,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-green-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-black rounded-full flex items-center justify-center mx-auto mb-4">
                 <Users className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
               <h3 className="text-lg font-semibold mb-2 dark:text-white">Educators</h3>
@@ -346,7 +346,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-purple-100 dark:bg-black rounded-full flex items-center justify-center mx-auto mb-4">
                 <Shield className="h-8 w-8 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="text-lg font-semibold mb-2 dark:text-white">Researchers</h3>
@@ -356,7 +356,7 @@ export default function LandingPage() {
             </div>
 
             <div className="text-center p-6">
-              <div className="w-16 h-16 bg-orange-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-orange-100 dark:bg-black rounded-full flex items-center justify-center mx-auto mb-4">
                 <Brain className="h-8 w-8 text-orange-600 dark:text-orange-400" />
               </div>
               <h3 className="text-lg font-semibold mb-2 dark:text-white">General Public</h3>
@@ -369,7 +369,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 sm:py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-slate-900 dark:to-indigo-950">
+      <section className="py-12 sm:py-20 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-black dark:to-black">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">
             Ready to Fight Misinformation?
@@ -400,7 +400,7 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 dark:bg-slate-950 text-white py-8 sm:py-12">
+      <footer className="bg-gray-900 dark:bg-black text-white py-8 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-2">

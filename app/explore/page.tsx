@@ -191,7 +191,7 @@ export default function ExplorePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+      <div className="min-h-screen bg-gray-50 dark:bg-black">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-center h-64">
@@ -203,22 +203,22 @@ export default function ExplorePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
-      <Navbar />
+          <div className="min-h-screen bg-gray-50 dark:bg-black">
+        <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Header Section */}
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Explore Community
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
-            Discover and vote on content verifications from the community
-          </p>
-        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+          {/* Header Section */}
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Explore Community
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+              Discover and vote on content verifications from the community
+            </p>
+          </div>
 
-        {/* Search and Filter Section */}
-        <Card className="mb-6 dark:bg-slate-900 dark:border-slate-800">
+          {/* Search and Filter Section */}
+          <Card className="mb-6 dark:bg-black dark:border-slate-800">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Search */}
@@ -265,11 +265,11 @@ export default function ExplorePage() {
         {/* Analyses Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {filteredAnalyses.map((analysis) => (
-            <Card key={analysis.id} className="dark:bg-slate-900 dark:border-slate-800 hover:shadow-lg transition-shadow">
+            <Card key={analysis.id} className="dark:bg-black dark:border-slate-800 hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-slate-700 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-black flex items-center justify-center">
                       {analysis.userPhotoURL ? (
                         <img 
                           src={analysis.userPhotoURL} 
@@ -310,7 +310,7 @@ export default function ExplorePage() {
                 </div>
 
                 {/* Analysis Summary */}
-                <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-3">
+                <div className="bg-gray-50 dark:bg-black rounded-lg p-3">
                   <p className="text-xs dark:text-gray-400 mb-2">Analysis Summary</p>
                   <p className="text-sm dark:text-gray-300 line-clamp-2">
                     {analysis.summary}
@@ -374,7 +374,7 @@ export default function ExplorePage() {
 
         {/* Empty State */}
         {filteredAnalyses.length === 0 && (
-          <Card className="dark:bg-slate-900 dark:border-slate-800">
+          <Card className="dark:bg-black dark:border-slate-800">
             <CardContent className="p-8 text-center">
               <div className="text-gray-500 dark:text-gray-400 mb-4">
                 <Search className="h-12 w-12 mx-auto mb-4" />

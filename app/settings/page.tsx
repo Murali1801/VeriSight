@@ -208,7 +208,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -222,13 +222,13 @@ export default function SettingsPage() {
 
         <div className="space-y-6">
           {/* Profile Picture Settings */}
-          <Card>
+          <Card className="dark:bg-black dark:border-slate-800">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center dark:text-white">
                 <Camera className="h-5 w-5 mr-2" />
                 Profile Picture
               </CardTitle>
-              <CardDescription>Update your profile picture</CardDescription>
+              <CardDescription className="dark:text-gray-300">Update your profile picture</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center space-x-4">
@@ -271,13 +271,13 @@ export default function SettingsPage() {
           </Card>
 
           {/* Account Settings */}
-          <Card>
+          <Card className="dark:bg-black dark:border-slate-800">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center dark:text-white">
                 <Mail className="h-5 w-5 mr-2" />
                 Account Settings
               </CardTitle>
-              <CardDescription>Update your email and basic account information</CardDescription>
+              <CardDescription className="dark:text-gray-300">Update your email and basic account information</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -321,13 +321,13 @@ export default function SettingsPage() {
           </Card>
 
           {/* Notification Settings */}
-          <Card>
+          <Card className="dark:bg-black dark:border-slate-800">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center dark:text-white">
                 <Bell className="h-5 w-5 mr-2" />
                 Notification Preferences
               </CardTitle>
-              <CardDescription>Choose what notifications you want to receive</CardDescription>
+              <CardDescription className="dark:text-gray-300">Choose what notifications you want to receive</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -366,13 +366,13 @@ export default function SettingsPage() {
           </Card>
 
           {/* Privacy Settings */}
-          <Card>
+          <Card className="dark:bg-black dark:border-slate-800">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center dark:text-white">
                 <Eye className="h-5 w-5 mr-2" />
                 Privacy Settings
               </CardTitle>
-              <CardDescription>Control your privacy and data sharing preferences</CardDescription>
+              <CardDescription className="dark:text-gray-300">Control your privacy and data sharing preferences</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
@@ -390,13 +390,13 @@ export default function SettingsPage() {
           </Card>
 
           {/* Security Settings */}
-          <Card>
+          <Card className="dark:bg-black dark:border-slate-800">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center dark:text-white">
                 <Shield className="h-5 w-5 mr-2" />
                 Security Settings
               </CardTitle>
-              <CardDescription>Manage your password and account security</CardDescription>
+              <CardDescription className="dark:text-gray-300">Manage your password and account security</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-4">
@@ -441,7 +441,7 @@ export default function SettingsPage() {
           </Card>
 
           {/* Danger Zone */}
-          <Card className="border-red-200">
+          <Card className="border-red-200 dark:bg-black dark:border-red-800">
             <CardHeader>
               <CardTitle className="flex items-center text-red-600">
                 <Trash2 className="h-5 w-5 mr-2" />

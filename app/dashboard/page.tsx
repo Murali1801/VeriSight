@@ -357,7 +357,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+    <div className="min-h-screen bg-gray-50 dark:bg-black">
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -380,7 +380,7 @@ export default function DashboardPage() {
                 </div>
                 <span className="text-xs text-gray-500 dark:text-gray-400">Karma</span>
               </div>
-              <Badge variant="secondary" className="bg-blue-100 dark:bg-slate-800 text-blue-800 dark:text-blue-300 text-xs sm:text-sm">
+              <Badge variant="secondary" className="bg-blue-100 dark:bg-black text-blue-800 dark:text-blue-300 text-xs sm:text-sm">
                 {userData?.badges?.[0] || "Truth Seeker"}
               </Badge>
             </div>
@@ -390,7 +390,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Main Analysis Section */}
           <div className="lg:col-span-2">
-            <Card className="dark:bg-slate-900 dark:border-slate-800">
+            <Card className="dark:bg-black dark:border-slate-800">
               <CardHeader>
                 <CardTitle className="dark:text-white">Content Analysis</CardTitle>
                 <CardDescription className="dark:text-gray-300">
@@ -399,7 +399,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="grid w-full grid-cols-3 dark:bg-slate-800">
+                  <TabsList className="grid w-full grid-cols-3 dark:bg-black">
                     <TabsTrigger
                       value="text"
                       className="flex items-center space-x-1 sm:space-x-2 dark:data-[state=active]:bg-slate-700 text-xs sm:text-sm"
@@ -435,7 +435,7 @@ export default function DashboardPage() {
                           placeholder="Paste text content or URL here..."
                           value={textContent}
                           onChange={(e) => setTextContent(e.target.value)}
-                          className="min-h-[100px] sm:min-h-[120px] pr-12 dark:bg-slate-800 dark:border-slate-700 dark:text-white text-sm sm:text-base"
+                          className="min-h-[100px] sm:min-h-[120px] pr-12 dark:bg-black dark:border-slate-700 dark:text-white text-sm sm:text-base"
                         />
                         <div className="absolute right-2 top-2 flex items-center space-x-1">
                           {transcript && (
@@ -651,7 +651,7 @@ export default function DashboardPage() {
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
             {/* Quick Stats */}
-            <Card className="dark:bg-slate-900 dark:border-slate-800">
+            <Card className="dark:bg-black dark:border-slate-800">
               <CardHeader>
                 <CardTitle className="text-lg dark:text-white">Your Stats</CardTitle>
               </CardHeader>
@@ -681,7 +681,7 @@ export default function DashboardPage() {
             </Card>
 
             {/* Recent Analyses */}
-            <Card className="dark:bg-slate-900 dark:border-slate-800">
+            <Card className="dark:bg-black dark:border-slate-800">
               <CardHeader>
                 <CardTitle className="text-lg dark:text-white">Recent Analyses</CardTitle>
               </CardHeader>
@@ -690,7 +690,7 @@ export default function DashboardPage() {
                   {pastAnalyses.map((analysis) => (
                     <div
                       key={analysis.id}
-                      className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 dark:bg-slate-800 rounded-lg"
+                      className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 dark:bg-black rounded-lg"
                     >
                       <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
                         {analysis.type === "text" && <FileText className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />}
