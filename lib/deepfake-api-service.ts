@@ -48,5 +48,15 @@ export async function analyzeContent(
     throw new Error(errorData.message || "Failed to analyze content");
   }
 
-  return response.json();
+  const rawResponse = await response.json();
+  let parsedResponse: DeepfakeAnalysisResponse;
+
+  try {
+    // Attempt to parse if it's a nested JSON string
+    parsedResponse = JSON.parse(rawResponse.raw_response);
+  } catch (e) {
+    // If parsing fails or raw_response.raw_response doesn't exist, assume it's a direct JSON
+    parsedResponse = rawResponse;
+  }
+  return parsedResponse;
 }

@@ -74,7 +74,7 @@ export function DeepfakeReport({ report }: DeepfakeReportProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {report.credibility_proof.map((proof, index) => (
+                {report.credibility_proof?.map((proof, index) => (
                   <TableRow key={index}>
                     <TableCell>{proof.claim_verified}</TableCell>
                     <TableCell>{proof.matched_fact}</TableCell>
@@ -109,7 +109,7 @@ export function DeepfakeReport({ report }: DeepfakeReportProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {report.evidence.map((item, index) => (
+                {report.evidence?.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell>{item.source_title}</TableCell>
                     <TableCell>{item.reputation_score}%</TableCell>

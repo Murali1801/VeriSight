@@ -38,6 +38,7 @@ import {
   subscribeToRecentAnalyses
 } from "@/lib/user-service";
 import { analyzeContent } from "@/lib/deepfake-api-service";
+import { DeepfakeReport } from "@/components/deepfake-report";
 
 // Web Speech API TypeScript declarations
 declare global {
@@ -90,6 +91,32 @@ export default function DashboardPage() {
   const [videoPreview, setVideoPreview] = useState<string | null>(null)
   const { user } = useAuth()
   const { toast } = useToast()
+
+  const handleDelete = async (analysisId: string) => {
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to delete analyses",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      await deleteAnalysis(analysisId);
+      toast({
+        title: "Analysis Deleted",
+        description: "The analysis has been successfully deleted.",
+      });
+      // The real-time listener for pastAnalyses will automatically update the list
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete analysis",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fileType: 'image' | 'video') => {
     const file = e.target.files?.[0]
@@ -618,7 +645,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <DeepfakeReport
-                    analysis={analysisResult}
+                    report={analysisResult}
                     handleVote={handleVote}
                     userVote={userVote}
                     user={user}
