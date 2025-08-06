@@ -89,31 +89,33 @@ export function Navbar() {
     <nav className="bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200/20 dark:border-slate-800/30 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/dashboard" className="flex items-center space-x-2">
-            <Shield className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">VeriSight</span>
-          </Link>
+          <div className="flex items-center space-x-8">
+            {/* Logo */}
+            <Link href="/dashboard" className="flex items-center space-x-2">
+              <Shield className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+              <span className="text-xl font-bold text-gray-900 dark:text-white">VeriSight</span>
+            </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => {
-              const Icon = item.icon
-              return (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive(item.href)
-                      ? "bg-blue-100 dark:bg-slate-800 text-blue-700 dark:text-blue-300"
-                      : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800/50"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.name}</span>
-                </Link>
-              )
-            })}
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {navigation.map((item) => {
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      isActive(item.href)
+                        ? "bg-blue-100 dark:bg-slate-800 text-blue-700 dark:text-blue-300"
+                        : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800/50"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                )
+              })}
+            </div>
           </div>
 
           {/* Right side items */}
@@ -128,6 +130,9 @@ export function Navbar() {
                 {userData?.badges?.[0] || "Truth Seeker"}
               </Badge>
             </div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Profile Dropdown */}
             <DropdownMenu>
@@ -169,6 +174,12 @@ export function Navbar() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Sign Out Button */}
+            <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex">
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-2" ref={menuRef}>
