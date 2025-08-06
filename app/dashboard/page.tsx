@@ -36,7 +36,8 @@ import {
   subscribeToUserData,
   UserData,
   subscribeToRecentAnalyses
-} from "@/lib/user-service"
+} from "@/lib/user-service";
+import { analyzeContent } from "@/lib/deepfake-api-service";
 
 // Web Speech API TypeScript declarations
 declare global {
@@ -47,21 +48,26 @@ declare global {
 }
 
 interface AnalysisResult {
-  id?: string
-  verdict: "FAKE" | "REAL"
-  credibilityScore: number
-  summary: string
-  sources: string[]
-  breakdown: {
-    textAnalysis: number
-    imageAnalysis: number
-    sourceVerification: number
-    communityFeedback: number
-  }
+  id?: string;
+  verdict: "Fake" | "Real";
+  confidence_score: number;
+  analysis_summary: string;
+  credibility_proof: {
+    claim_verified: string;
+    matched_fact: string;
+    source_proof_url: string;
+  }[];
+  evidence: {
+    reputation_score: number;
+    similarity_score: number;
+    source_title: string;
+    source_url: string;
+    summary: string;
+  }[];
   communityVotes?: {
-    up: number
-    down: number
-  }
+    up: number;
+    down: number;
+  };
 }
 
 export default function DashboardPage() {
@@ -78,8 +84,29 @@ export default function DashboardPage() {
   const [communityVotes, setCommunityVotes] = useState(0)
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null)
   const [transcript, setTranscript] = useState("")
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [videoPreview, setVideoPreview] = useState<string | null>(null)
   const { user } = useAuth()
   const { toast } = useToast()
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, fileType: 'image' | 'video') => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        if (fileType === 'image') {
+          setImageFile(file)
+          setImagePreview(reader.result as string)
+        } else {
+          setVideoFile(file)
+          setVideoPreview(reader.result as string)
+        }
+      }
+      reader.readAsDataURL(file)
+    }
+  }
 
   const handleAnalyze = async () => {
     if (!user) {
@@ -94,37 +121,39 @@ export default function DashboardPage() {
     setIsAnalyzing(true)
 
     try {
-      // Simulate analysis
-      const result = {
-        verdict: Math.random() > 0.5 ? "REAL" : "FAKE" as "REAL" | "FAKE",
-        credibilityScore: Math.floor(Math.random() * 100),
-        summary:
-          "Based on our comprehensive analysis, this content shows several indicators of manipulation. The text patterns suggest automated generation, and cross-referencing with verified sources reveals inconsistencies in the claims made.",
-        sources: ["Reuters Fact Check Database", "Associated Press Verification", "Snopes.com", "PolitiFact"],
-        breakdown: {
-          textAnalysis: 75,
-          imageAnalysis: 60,
-          sourceVerification: 85,
-          communityFeedback: 70,
-        },
+      let content: string | File = textContent;
+      if (activeTab === 'image' && imageFile) {
+        content = imageFile;
+      } else if (activeTab === 'video' && videoFile) {
+        content = videoFile;
       }
+
+      const result = await analyzeContent(
+        activeTab as "text" | "image" | "video",
+        content
+      );
 
       // Save to Firebase
       const analysisId = await saveAnalysis({
         userId: user.uid,
         type: activeTab as "text" | "image" | "video",
         content: textContent || "Uploaded content",
-        verdict: result.verdict,
-        credibilityScore: result.credibilityScore,
-        summary: result.summary,
-        sources: result.sources,
-        breakdown: result.breakdown,
+        verdict: result.verdict as "REAL" | "FAKE",
+        credibilityScore: result.confidence_score,
+        summary: result.analysis_summary,
+        sources: result.evidence.map(e => e.source_url),
+        breakdown: {
+          textAnalysis: result.confidence_score,
+          imageAnalysis: 0,
+          sourceVerification: 0,
+          communityFeedback: 0,
+        },
       })
 
       // Update result with ID and initial votes
       setAnalysisResult({
-        ...result,
         id: analysisId,
+        ...result,
         communityVotes: { up: 0, down: 0 }
       })
 
@@ -135,7 +164,10 @@ export default function DashboardPage() {
 
       // Clear the form
       setTextContent("")
-      setAnalysisResult(null)
+      setImageFile(null)
+      setVideoFile(null)
+      setImagePreview(null)
+      setVideoPreview(null)
 
       // Real-time updates will automatically refresh the list
     } catch (error: any) {
@@ -483,33 +515,79 @@ export default function DashboardPage() {
 
                   <TabsContent value="image" className="space-y-4">
                     <div className="border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-lg p-4 sm:p-8 text-center hover:border-gray-400 dark:hover:border-slate-600 transition-colors">
-                      <Upload className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3 sm:mb-4" />
-                      <p className="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">Drop your image here</p>
-                      <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">or click to browse</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800 bg-transparent"
-                      >
-                        <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                        Choose Image
-                      </Button>
+                      <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, 'image')} className="hidden" id="image-upload" />
+                      {imagePreview ? (
+                        <div className="relative">
+                          <img src={imagePreview} alt="Image preview" className="rounded-lg w-full h-auto" />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-red-500"
+                            onClick={() => {
+                              setImageFile(null)
+                              setImagePreview(null)
+                            }}
+                            title="Clear image"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <label htmlFor="image-upload" className="cursor-pointer">
+                          <Upload className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3 sm:mb-4" />
+                          <p className="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">Drop your image here</p>
+                          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">or click to browse</p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800 bg-transparent"
+                            onClick={() => document.getElementById('image-upload')?.click()}
+                          >
+                            <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                            Choose Image
+                          </Button>
+                        </label>
+                      )}
                     </div>
                   </TabsContent>
 
                   <TabsContent value="video" className="space-y-4">
                     <div className="border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-lg p-4 sm:p-8 text-center hover:border-gray-400 dark:hover:border-slate-600 transition-colors">
-                      <Video className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3 sm:mb-4" />
-                      <p className="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">Drop your video here</p>
-                      <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">or click to browse</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800 bg-transparent"
-                      >
-                        <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
-                        Choose Video
-                      </Button>
+                      <input type="file" accept="video/*" onChange={(e) => handleFileChange(e, 'video')} className="hidden" id="video-upload" />
+                      {videoPreview ? (
+                        <div className="relative">
+                          <video src={videoPreview} controls className="rounded-lg w-full h-auto" />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="absolute top-2 right-2 text-gray-500 dark:text-gray-400 hover:text-red-500"
+                            onClick={() => {
+                              setVideoFile(null)
+                              setVideoPreview(null)
+                            }}
+                            title="Clear video"
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <label htmlFor="video-upload" className="cursor-pointer">
+                          <Video className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500 mx-auto mb-3 sm:mb-4" />
+                          <p className="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">Drop your video here</p>
+                          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mb-3 sm:mb-4">or click to browse</p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="dark:border-slate-700 dark:text-gray-300 dark:hover:bg-slate-800 bg-transparent"
+                            onClick={() => document.getElementById('video-upload')?.click()}
+                          >
+                            <Upload className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                            Choose Video
+                          </Button>
+                        </label>
+                      )}
                     </div>
                   </TabsContent>
                 </Tabs>
@@ -542,63 +620,48 @@ export default function DashboardPage() {
                   {/* Credibility Score */}
                   <div>
                     <div className="flex justify-between items-center mb-2">
-                      <Label className="dark:text-gray-200">Credibility Score</Label>
-                      <span className="text-2xl font-bold dark:text-white">{analysisResult.credibilityScore}/100</span>
+                      <Label className="dark:text-gray-200">Confidence Score</Label>
+                      <span className="text-2xl font-bold dark:text-white">{analysisResult.confidence_score}/100</span>
                     </div>
-                    <Progress value={analysisResult.credibilityScore} className="h-3" />
+                    <Progress value={analysisResult.confidence_score} className="h-3" />
                   </div>
 
                   {/* Summary */}
                   <div>
                     <Label className="text-base font-semibold dark:text-gray-200">AI Analysis Summary</Label>
-                    <p className="text-gray-700 dark:text-gray-300 mt-2 leading-relaxed">{analysisResult.summary}</p>
+                    <p className="text-gray-700 dark:text-gray-300 mt-2 leading-relaxed">{analysisResult.analysis_summary}</p>
                   </div>
 
-                  {/* Breakdown Chart */}
+                  {/* Credibility Proof */}
                   <div>
-                    <Label className="text-base font-semibold mb-4 block dark:text-gray-200">Analysis Breakdown</Label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1 dark:text-gray-300">
-                          <span>Text Analysis</span>
-                          <span>{analysisResult.breakdown.textAnalysis}%</span>
+                    <Label className="text-base font-semibold dark:text-gray-200">Credibility Proof</Label>
+                    <div className="mt-2 space-y-4">
+                      {analysisResult.credibility_proof.map((proof, index) => (
+                        <div key={index} className="p-4 bg-gray-100 dark:bg-slate-800 rounded-lg">
+                          <p className="font-semibold text-gray-800 dark:text-gray-200">Claim Verified: <span className="font-normal">{proof.claim_verified}</span></p>
+                          <p className="mt-2 text-gray-700 dark:text-gray-300">Matched Fact: <span className="font-normal">{proof.matched_fact}</span></p>
+                          <a href={proof.source_proof_url} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                            Source Proof
+                          </a>
                         </div>
-                        <Progress value={analysisResult.breakdown.textAnalysis} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1 dark:text-gray-300">
-                          <span>Image Analysis</span>
-                          <span>{analysisResult.breakdown.imageAnalysis}%</span>
-                        </div>
-                        <Progress value={analysisResult.breakdown.imageAnalysis} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1 dark:text-gray-300">
-                          <span>Source Verification</span>
-                          <span>{analysisResult.breakdown.sourceVerification}%</span>
-                        </div>
-                        <Progress value={analysisResult.breakdown.sourceVerification} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1 dark:text-gray-300">
-                          <span>Community Feedback</span>
-                          <span>{analysisResult.breakdown.communityFeedback}%</span>
-                        </div>
-                        <Progress value={analysisResult.breakdown.communityFeedback} className="h-2" />
-                      </div>
+                      ))}
                     </div>
                   </div>
 
-                  {/* Sources */}
+                  {/* Evidence */}
                   <div>
-                    <Label className="text-base font-semibold dark:text-gray-200">Matching Sources</Label>
-                    <div className="mt-2 space-y-2">
-                      {analysisResult.sources.map((source, index) => (
-                        <div key={index} className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          <span className="text-sm text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">
-                            {source}
-                          </span>
+                    <Label className="text-base font-semibold dark:text-gray-200">Evidence</Label>
+                    <div className="mt-2 space-y-4">
+                      {analysisResult.evidence.map((evidence, index) => (
+                        <div key={index} className="p-4 bg-gray-100 dark:bg-slate-800 rounded-lg">
+                          <a href={evidence.source_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                            {evidence.source_title}
+                          </a>
+                          <p className="mt-2 text-gray-700 dark:text-gray-300">{evidence.summary}</p>
+                          <div className="flex items-center justify-between mt-2 text-sm text-gray-500 dark:text-gray-400">
+                            <span>Reputation: {evidence.reputation_score}/100</span>
+                            <span>Similarity: {evidence.similarity_score}%</span>
+                          </div>
                         </div>
                       ))}
                     </div>

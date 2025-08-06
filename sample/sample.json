@@ -1,0 +1,30 @@
+{
+    "analysis_summary": "The image depicts a headline from The Washington Post claiming that Donald Trump has resigned and left the White House. However, this event did not occur in reality. The image appears to be a manipulated or fictional representation, as there is no historical record of such an event. The use of dramatic language and the absence of formal statements or credible sources supporting this claim further indicate that this is a fake news story.",
+    "confidence_score": 95,
+    "credibility_proof": [
+        {
+            "claim_verified": "Donald Trump resigned and left the White House on May 1, 2019",
+            "matched_fact": "Donald Trump completed his term as President of the United States on January 20, 2021, and there is no record of him resigning or leaving the White House in May 2019.",
+            "source_proof_url": "https://www.whitehouse.gov/about-the-white-house/presidents/"
+        }
+    ],
+    "evidence": [
+        {
+            "reputation_score": 98,
+            "similarity_score": 85,
+            "source_title": "Washington Post Fact Checker",
+            "source_url": "https://www.washingtonpost.com/politics/fact-checker/",
+            "summary": "The Washington Post Fact Checker has debunked numerous fake news stories and would likely address such a major headline if it were false."
+        },
+        {
+            "reputation_score": 95,
+            "similarity_score": 80,
+            "source_title": "Snopes",
+            "source_url": "https://www.snopes.com/",
+            "summary": "Snopes is a well-known fact-checking website that has debunked numerous fake news stories, including those related to political figures."
+        }
+    ],
+    "input_content": "The Washington Post headline from May 1, 2019, stating 'UNPRESIDENTED: ENDING CRISIS, TRUMP HASTILY DEPARTS WHITE HOUSE'",
+    "input_type": "Image",
+    "verdict": "Fake"
+}
