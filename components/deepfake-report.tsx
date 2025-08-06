@@ -27,7 +27,15 @@ export function DeepfakeReport({ report }: DeepfakeReportProps) {
           <p>
             <span className="font-medium">Input Type:</span> {report.input_type}
           </p>
-          <p>
+          <p
+            className={`p-4 rounded-lg ${
+              report.verdict === "Real"
+                ? "bg-green-100 dark:bg-green-900/30"
+                : report.verdict === "Fake"
+                ? "bg-red-100 dark:bg-red-900/30"
+                : "bg-gray-100 dark:bg-slate-800"
+            }`}
+          >
             <span className="font-medium">Input Content:</span>{" "}
             {report.input_content}
           </p>

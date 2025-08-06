@@ -1,0 +1,39 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      // Allow users to read and write to their own document
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    match /analyses/{analysisId} {
+      // Allow any authenticated user to read analyses
+      allow read: if request.auth != null;
+      
+      // Allow authenticated users to create analyses, ensuring the userId matches their own
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      
+      // Allow the user who created the analysis or an admin to update it (e.g., for community votes)
+      // For now, only the user can update. You can add admin logic later.
+      allow update: if request.auth != null && request.auth.uid == resource.data.userId;
+      
+      // Disallow deletion for data integrity
+      allow delete: if false;
+    }
+
+    match /votes/{voteId} {
+      // Allow authenticated users to read votes if needed, though direct reads are not common in the app
+      allow read: if request.auth != null;
+      
+      // Allow authenticated users to create a vote
+      // Add validation to ensure the vote is either "up" or "down"
+      allow create: if request.auth != null 
+                    && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.vote in ['up', 'down'];
+      
+      // Disallow updates or deletes to votes to prevent tampering
+      allow update, delete: if false;
+    }
+  }
+}

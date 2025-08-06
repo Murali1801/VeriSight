@@ -609,103 +609,21 @@ export default function DashboardPage() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="dark:text-white">Analysis Results</CardTitle>
                     <Badge
-                      variant={analysisResult.verdict === "REAL" ? "default" : "destructive"}
+                      variant={analysisResult.verdict === "REAL" ? "success" : analysisResult.verdict === "FAKE" ? "destructive" : "secondary"}
                       className="text-lg px-3 py-1"
                     >
                       {analysisResult.verdict}
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Credibility Score */}
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <Label className="dark:text-gray-200">Confidence Score</Label>
-                      <span className="text-2xl font-bold dark:text-white">{analysisResult.confidence_score}/100</span>
-                    </div>
-                    <Progress value={analysisResult.confidence_score} className="h-3" />
-                  </div>
-
-                  {/* Summary */}
-                  <div>
-                    <Label className="text-base font-semibold dark:text-gray-200">AI Analysis Summary</Label>
-                    <p className="text-gray-700 dark:text-gray-300 mt-2 leading-relaxed">{analysisResult.analysis_summary}</p>
-                  </div>
-
-                  {/* Credibility Proof */}
-                  <div>
-                    <Label className="text-base font-semibold dark:text-gray-200">Credibility Proof</Label>
-                    <div className="mt-2 space-y-4">
-                      {analysisResult.credibility_proof.map((proof, index) => (
-                        <div key={index} className="p-4 bg-gray-100 dark:bg-slate-800 rounded-lg">
-                          <p className="font-semibold text-gray-800 dark:text-gray-200">Claim Verified: <span className="font-normal">{proof.claim_verified}</span></p>
-                          <p className="mt-2 text-gray-700 dark:text-gray-300">Matched Fact: <span className="font-normal">{proof.matched_fact}</span></p>
-                          <a href={proof.source_proof_url} target="_blank" rel="noopener noreferrer" className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                            Source Proof
-                          </a>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Evidence */}
-                  <div>
-                    <Label className="text-base font-semibold dark:text-gray-200">Evidence</Label>
-                    <div className="mt-2 space-y-4">
-                      {analysisResult.evidence.map((evidence, index) => (
-                        <div key={index} className="p-4 bg-gray-100 dark:bg-slate-800 rounded-lg">
-                          <a href={evidence.source_url} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 dark:text-blue-400 hover:underline">
-                            {evidence.source_title}
-                          </a>
-                          <p className="mt-2 text-gray-700 dark:text-gray-300">{evidence.summary}</p>
-                          <div className="flex items-center justify-between mt-2 text-sm text-gray-500 dark:text-gray-400">
-                            <span>Reputation: {evidence.reputation_score}/100</span>
-                            <span>Similarity: {evidence.similarity_score}%</span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Community Voting */}
-                  <div className="border-t dark:border-slate-700 pt-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <Label className="text-base font-semibold dark:text-gray-200">Was this result accurate?</Label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {analysisResult.communityVotes && analysisResult.communityVotes.up + analysisResult.communityVotes.down > 0 
-                            ? `${analysisResult.communityVotes.up} of ${analysisResult.communityVotes.up + analysisResult.communityVotes.down} users agree`
-                            : "Be the first to vote!"
-                          }
-                        </p>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => analysisResult.id && handleVote(analysisResult.id, "up")}
-                          className="dark:border-slate-700"
-                          disabled={!analysisResult.id}
-                        >
-                          <ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                          <span className="text-xs sm:text-sm">{analysisResult.communityVotes?.up || 0}</span>
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => analysisResult.id && handleVote(analysisResult.id, "down")}
-                          className="dark:border-slate-700"
-                          disabled={!analysisResult.id}
-                        >
-                          <ThumbsDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                          <span className="text-xs sm:text-sm">{analysisResult.communityVotes?.down || 0}</span>
-                        </Button>
-                        <Button variant="outline" size="sm" className="dark:border-slate-700 bg-transparent">
-                          <Flag className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                <CardContent>
+                  <DeepfakeReport
+                    analysis={analysisResult}
+                    handleVote={handleVote}
+                    userVote={userVote}
+                    user={user}
+                    handleDelete={handleDelete}
+                  />
                 </CardContent>
               </Card>
             )}
@@ -767,7 +685,7 @@ export default function DashboardPage() {
                           </p>
                           <div className="flex items-center space-x-1 sm:space-x-2 mt-1">
                             <Badge
-                              variant={analysis.verdict === "REAL" ? "default" : "destructive"}
+                              variant={analysis.verdict === "REAL" ? "success" : analysis.verdict === "FAKE" ? "destructive" : "secondary"}
                               className="text-xs"
                             >
                               {analysis.verdict}
