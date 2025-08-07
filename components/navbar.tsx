@@ -15,6 +15,8 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
+
+
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { subscribeToUserData, UserData } from "@/lib/user-service"
@@ -134,46 +136,9 @@ export function Navbar() {
             {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* Profile Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Image
-                    src={userData?.photoURL || user?.photoURL || "/placeholder.svg?height=32&width=32&text=User"}
-                    alt="Profile"
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <div className="flex items-center justify-start gap-2 p-2">
-                  <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">{userData?.displayName || user?.displayName || "User"}</p>
-                    <p className="w-[200px] truncate text-sm text-muted-foreground">{userData?.email || user?.email}</p>
-                  </div>
-                </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/profile" className="flex items-center">
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/settings" className="flex items-center">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600 dark:text-red-400 cursor-pointer" onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            
+
+            
 
             {/* Sign Out Button */}
             <Button variant="outline" size="sm" onClick={handleLogout} className="hidden sm:flex">
@@ -183,17 +148,16 @@ export function Navbar() {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden flex items-center space-x-2" ref={menuRef}>
-              <ThemeToggle />
+              
               <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2 h-auto w-auto">
-                {isMobileMenuOpen ? <X className="h-5 w-5 text-gray-900 dark:text-white" /> : <Menu className="h-5 w-5 text-gray-900 dark:text-white" />}
-              </Button>
+                {isMobileMenuOpen ? <X className="h-5 w-5 text-gray-900 dark:text-white" /> : <Menu className="h-5 w-5 text-gray-900 dark:text-white" />}</Button>
             </div>
           </div>
         </div>
 
         {/* Mobile Menu Popup */}
         {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 right-2 w-32 bg-white dark:bg-black border border-gray-200 dark:border-slate-700 rounded-md shadow-lg z-40" ref={menuRef}>
+          <div className="md:hidden absolute top-16 right-2 w-32 bg-white dark:bg-black border border-gray-200/20 dark:border-slate-700 rounded-md shadow-lg z-40" ref={menuRef}>
             <div className="p-1 space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon
@@ -213,7 +177,7 @@ export function Navbar() {
                       }`}
                     >
                       <Icon className="h-4 w-4 mr-2" />
-                      {item.name}
+                      <span>{item.name}</span>
                     </Button>
                   </Link>
                 )
